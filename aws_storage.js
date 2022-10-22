@@ -3,7 +3,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 
 dotenv.config();
-const { AWS_ACCESS_KEY, AWS_ACCESS_SECRET_ID } = process.env;
+const { AWS_ACCESS_KEY, AWS_ACCESS_SECRET_ID, BUCKET_ID } = process.env;
 
 const storage = new AWS.S3({ 
     region: 'GRA',
@@ -17,18 +17,18 @@ const storage = new AWS.S3({
 
 (async () => {
     try {
-        const objects = await storage.listObjects({ Bucket: 'happierleadsstorage'}).promise();
+        const objects = await storage.listObjects({ Bucket: BUCKET_ID }).promise();
         console.log(objects);
         
         const file = "C:\\Users\\lo\\Videos\\SONGS\\Hall.mp4";
-        const object = await storage.getObject({ Bucket: 'happierleadsstorage', Key: 'Hall_song.mp4'}).promise();
+        const object = await storage.getObject({ Bucket: BUCKET_ID, Key: 'Hall_song.mp4'}).promise();
         
 
         const written = fs.writeFileSync('Hall_song.mp4',object.Body);
         console.log('finished to write the file');
 
         const data = fs.readFileSync(file);
-        const uploaded = await storage.upload({ Body: data,  Bucket: 'happierleadsstorage', Key: 'Hall_song.mp4' }).promise();
+        const uploaded = await storage.upload({ Body: data,  Bucket: BUCKET_ID, Key: 'Hall_song.mp4' }).promise();
         console.log('finished to upload the file');
 
     } catch (e) {
