@@ -20,15 +20,13 @@ const storage = new AWS.S3({
         const objects = await storage.listObjects({ Bucket: BUCKET_ID }).promise();
         console.log(objects);
         
-        const file = "C:\\Users\\lo\\Videos\\SONGS\\Hall.mp4";
-        const object = await storage.getObject({ Bucket: BUCKET_ID, Key: 'Hall_song.mp4'}).promise();
+        const object = await storage.getObject({ Bucket: BUCKET_ID, Key: 'City.jpg'}).promise();
         
+        const written = fs.writeFileSync('City.jpg', object.Body);
+        console.log('finished to download the file');
 
-        const written = fs.writeFileSync('Hall_song.mp4',object.Body);
-        console.log('finished to write the file');
-
-        const data = fs.readFileSync(file);
-        const uploaded = await storage.upload({ Body: data,  Bucket: BUCKET_ID, Key: 'Hall_song.mp4' }).promise();
+        const data = fs.readFileSync('./City.jpg');
+        const uploaded = await storage.upload({ Body: data,  Bucket: BUCKET_ID, Key: 'City.jpg', ACL: 'public-read' }).promise();
         console.log('finished to upload the file');
 
     } catch (e) {
