@@ -1,33 +1,32 @@
-const AWS = require('aws-sdk');
 const fs = require('fs');
 const dotenv = require('dotenv');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 dotenv.config();
+
 const { AWS_ACCESS_KEY, AWS_ACCESS_SECRET_ID, BUCKET_ID } = process.env;
 
-const storage = new AWS.S3({ 
+const s3 = new S3Client({
     region: 'GRA',
     apiVersion: 'latest',
     endpoint: 'https://s3.gra.io.cloud.ovh.net/',
     credentials: {
         accessKeyId: AWS_ACCESS_KEY,
-        secretAccessKey: AWS_ACCESS_SECRET_ID
-    }
+        secretAccessKey: AWS_ACCESS_SECRET_ID,
+    },
 });
 
 (async () => {
     try {
-        const objects = await storage.listObjects({ Bucket: BUCKET_ID }).promise();
-        console.log(objects);
         
-        const object = await storage.getObject({ Bucket: BUCKET_ID, Key: 'City.jpg'}).promise();
-        
-        const written = fs.writeFileSync('City.jpg', object.Body);
-        console.log('finished to download the file');
+        // fs.writeFileSync('acasus.com.png', object.Body);
+        // console.log('finished to download the file');
 
-        const data = fs.readFileSync('./City.jpg');
-        const uploaded = await storage.upload({ Body: data,  Bucket: BUCKET_ID, Key: 'City.jpg', ACL: 'public-read' }).promise();
-        console.log('finished to upload the file');
+        const data = fs.readFileSync('./KLASHNIKOV.png');
+        const command = new PutObjectCommand({ Bucket: BUCKET_ID, Key: 'KLASHNIKOV.png', Body: data });
+
+        await s3.send(command);
+        console.log('uploaded');
 
     } catch (e) {
         console.log('an error occurred!: ', e);
